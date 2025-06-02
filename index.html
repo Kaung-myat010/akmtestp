@@ -1,0 +1,2805 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"> 
+  <meta name="theme-color" content="rgb(74, 71, 228)"> 
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BudgetPOS">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <title>POS System</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+<style type="text/css" id="dcoder_stylesheet">:root {
+    --primary-background: #080808; /* Deep black background */
+    --card-background: rgba(27, 26, 26, 0.8); /* Semi-transparent dark gray, matches card appearance */
+    --text-color: #dfe0df; /* Light gray text for readability */
+    --accent-color: #f89000; /* Orange for highlights and buttons */
+    --border-color: #444; /* Subtle dark border */
+    --hover-color: rgba(50, 50, 50, 0.8); /* Slightly lighter for hover effects */
+    --danger-color: #e04230; /* Red for delete actions */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: var(--primary-background);
+    color: var(--text-color);
+    overflow-x: hidden;
+    padding-bottom: 60px;
+    min-height: 100vh;
+}
+
+header {
+    background: linear-gradient(90deg, #131313, #161616);
+    color: var(--text-color);
+    padding: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 7px 15px;
+}
+
+.logo a1 {
+    background-color: var(--accent-color);
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.menu-toggle {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    color: var(--text-color);
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #1d1d1d;
+    color: var(--text-color);
+    position: fixed;
+    top: 50px;
+    left: 0;
+    bottom: 0;
+    padding: 20px 0;
+    transition: all 0.3s ease;
+    transform: translateX(-100%);
+    z-index: 999;
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.sidebar-menu {
+    list-style: none;
+}
+
+.sidebar-menu li {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.sidebar-menu li:hover {
+    background-color: var(--hover-color);
+}
+
+.sidebar-menu li.active {
+    background-color: var(--primary-background);
+    color: var(--text-color);
+}
+
+.sidebar-menu li i {
+    margin-right: 10px;
+}
+
+.main-content {
+    margin-left: 0;
+    margin-top: 70px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.main-content.active {
+    margin-left: 250px;
+}
+
+.page {
+    background: var(--card-background);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+}
+
+.card {
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+}
+
+.btn-primary:hover {
+    background-color: #e08500; /* Slightly darker orange on hover */
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn-success {
+    background-color: var(--accent-color);
+}
+
+.btn-success:hover {
+    background-color: #e08500;
+}
+
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+th {
+    background-color: #252525;
+}
+
+tr:hover {
+    background-color: var(--hover-color);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 16px;
+    background: rgba(50, 50, 50, 0.6);
+    color: var(--text-color);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-color);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.close {
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.action-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #2a2a2a;
+    color: var(--text-color);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.category-badge:hover {
+    background-color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .main-content.active {
+        margin-left: 0;
+    }
+
+    .table-container {
+        border-radius: 8px;
+    }
+
+    th, td {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
+
+.table-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.table-card {
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-color);
+}
+
+.table-card:hover {
+    background-color: var(--hover-color);
+}
+
+.table-card.active {
+    background-color: var(--accent-color);
+}
+
+.table-number {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.product-card {
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-color);
+}
+
+.product-card:hover {
+    background-color: var(--hover-color);
+}
+
+.product-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.product-price {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.product-category {
+    font-size: 10px;
+    color: #aaa;
+}
+
+.order-summary {
+    margin-top: 20px;
+}
+
+.order-items {
+    margin-bottom: 15px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+}
+
+.order-total {
+    font-weight: bold;
+    font-size: 16px;
+    text-align: right;
+    margin-top: 10px;
+}
+
+.grand-total {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: right;
+    margin-top: 20px;
+    color: var(--accent-color);
+}
+
+.category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.category-tab {
+    padding: 8px 15px;
+    background-color: #2a2a2a;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.category-tab:hover {
+    background-color: var(--accent-color);
+}
+
+.category-tab.active {
+    background-color: var(--accent-color);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.dashboard-card {
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-color);
+}
+
+.dashboard-card:hover {
+    background-color: var(--hover-color);
+}
+
+.dashboard-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.dashboard-card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.quick-actions .btn {
+    padding: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.report-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.report-results {
+    background: var(--card-background);
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    color: var(--text-color);
+}
+
+.delete-actions {
+    margin-top: 20px;
+    padding: 10px;
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    color: var(--text-color);
+}
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.purchase-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    align-items: flex-end;
+}
+
+.time-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.time-form input[type="time"] {
+    width: 150px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #252525;
+    color: var(--text-color);
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+@media (max-width: 480px) {
+    .table-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 8px;
+    }
+
+    .table-container {
+        border-radius: 8px;
+    }
+
+    .table-card {
+        padding: 5px;
+    }
+
+    .table-number {
+        font-size: 14px;
+    }
+
+    .quick-actions .btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .dashboard-card p {
+        font-size: 20px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    footer {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .time-form input[type="time"] {
+        width: 120px;
+        font-size: 14px;
+    }
+}</style></head>
+<body>
+<header>
+    <div class="logo">
+        Food <a1>Hub</a1>
+    </div>
+    <div class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+</header>
+<div class="sidebar" id="sidebar">
+    <ul class="sidebar-menu">
+        <li class="active" data-page="dashboard">
+            <i class="fas fa-tachometer-alt"></i> <span data-lang="dashboard">Dashboard</span>
+        </li>
+        <li data-page="current-orders">
+            <i class="fas fa-clipboard-list"></i> <span data-lang="current-orders">Current Orders</span>
+        </li>
+        <li data-page="products">
+            <i class="fas fa-utensils"></i> <span data-lang="products">Products</span>
+        </li>
+        <li data-page="categories">
+            <i class="fas fa-tags"></i> <span data-lang="categories">Categories</span>
+        </li>
+        <li data-page="purchases">
+            <i class="fas fa-shopping-cart"></i> <span data-lang="purchases">Purchases</span>
+        </li>
+        <li data-page="reports">
+            <i class="fas fa-chart-bar"></i> <span data-lang="reports">Reports</span>
+        </li>
+        <li data-page="settings">
+            <i class="fas fa-cog"></i> <span data-lang="settings">Settings</span>
+        </li>
+    </ul>
+</div>
+<div class="main-content" id="mainContent">
+    <div class="page" id="dashboard-page">
+        <h1 class="page-title" data-lang="dashboard">Dashboard</h1>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3 data-lang="orders">Orders</h3>
+                <p id="total-orders">
+                    0
+                </p>
+            </div>
+            <div class="dashboard-card">
+                <h3 data-lang="active-tables-parcels">Active Tables/Parcels</h3>
+                <p id="active-tables">
+                    0/32
+                </p>
+            </div>
+            <div class="dashboard-card">
+                <h3 data-lang="sales-revenue">Sales Revenue</h3>
+                <p id="sales-revenue">
+                    0 ကျပ်
+                </p>
+            </div>
+            <div class="dashboard-card">
+                <h3 data-lang="net-profit">Net Profit</h3>
+                <p id="net-profit">
+                    0 ကျပ်
+                </p>
+            </div>
+        </div>
+        <div class="card">
+            <h2 data-lang="quick-actions">Quick Actions</h2>
+            <br>
+            <div class="quick-actions">
+                <button class="btn btn-primary" id="newOrderBtn">
+                    <i class="fas fa-plus"></i> <span data-lang="new-order">New Order</span>
+                </button>
+                <button class="btn btn-primary" id="addProductBtn">
+                    <i class="fas fa-utensils"></i> <span data-lang="add-product">Add Product</span>
+                </button>
+                <button class="btn btn-primary" id="addCategoryBtn">
+                    <i class="fas fa-tag"></i> <span data-lang="add-category">Add Category</span>
+                </button>
+                <button class="btn btn-success" id="dailyReportBtn">
+                    <i class="fas fa-file-alt"></i> <span data-lang="daily-report">Daily Report</span>
+                </button>
+                <button class="btn btn-primary" id="addPurchaseBtn">
+                    <i class="fas fa-shopping-cart"></i> <span data-lang="add-purchase">Add Purchase</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="current-orders-page" style="display: none;">
+        <h1 class="page-title" data-lang="current-orders">Current Orders</h1>
+        <div class="card">
+            <h2 data-lang="tables">Tables</h2>
+            <br>
+            <div class="table-grid" id="tablesGrid"></div>
+        </div>
+        <div class="card">
+            <h2 data-lang="parcels">Parcels</h2>
+            <br>
+            <div class="table-grid" id="parcelsGrid"></div>
+        </div>
+        <div class="card order-details" id="orderDetails" style="display: none;">
+            <div class="modal-header">
+                <h2>
+                    <span data-lang="order-for"></span> <span id="currentTableNumber"></span>
+                </h2> <span class="close" id="closeOrderDetails">×</span>
+            </div>
+            <div class="time-form">
+                <form id="timeForm">
+                    <div class="form-group">
+                        <label for="orderTime" data-lang="time">Time</label>
+                        <input type="time" id="orderTime" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-clock"></i> <span data-lang="set-time">Set Time</span>
+                        </button>
+                    </div>
+                </form> <span><span data-lang="current-time">Current Time</span>: <span id="orderTimeDisplay">00:00</span></span>
+            </div>
+            <div class="order-summary">
+                <h3 data-lang="order-items">Order Items</h3>
+                <br>
+                <div class="table-container">
+                    <table id="orderItemsTable">
+                        <thead>
+                        <tr>
+                            <th data-lang="name">Name</th>
+                            <th data-lang="quantity">Qty</th>
+                            <th data-lang="price">Price</th>
+                            <th data-lang="total">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderItems"></tbody>
+                    </table>
+                </div>
+                <div class="grand-total">
+                    <span data-lang="grand-total">Grand Total</span>: <span id="orderTotal">0 ကျပ်</span>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="product-selection">
+                <h3 data-lang="add-products">Add Products</h3>
+                <br>
+                <div class="category-tabs" id="categoryTabs"></div>
+                <div class="product-grid" id="productsGrid"></div>
+            </div>
+            <div class="order-actions">
+                <button class="btn btn-danger" id="cancelOrderBtn">
+                    <i class="fas fa-times"></i> <span data-lang="cancel-order">Cancel Order</span>
+                </button>
+                <button class="btn btn-success" id="completeOrderBtn">
+                    <i class="fas fa-check"></i> <span data-lang="complete-order">Complete Order</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="products-page" style="display: none;">
+        <h1 class="page-title" data-lang="products">Products</h1>
+        <div class="card">
+            <div class="product-actions">
+                <button class="btn btn-primary" id="addNewProductBtn">
+                    <i class="fas fa-plus"></i> <span data-lang="add-product">Add Product</span>
+                </button>
+                <input type="text" id="productSearch" class="form-control" style="margin-top: 10px;" data-lang-placeholder="search-products">
+            </div>
+            <br>
+            <div class="table-container">
+                <table id="productsTable">
+                    <thead>
+                    <tr>
+                        <th data-lang="name">Name</th>
+                        <th data-lang="category">Category</th>
+                        <th data-lang="price">Price</th>
+                        <th data-lang="actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="productsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="categories-page" style="display: none;">
+        <h1 class="page-title" data-lang="categories">Categories</h1>
+        <div class="card">
+            <div class="category-actions">
+                <button class="btn btn-primary" id="addNewCategoryBtn">
+                    <i class="fas fa-plus"></i> <span data-lang="add-category">Add Category</span>
+                </button>
+            </div>
+            <br>
+            <div class="table-container">
+                <table id="categoriesTable">
+                    <thead>
+                    <tr>
+                        <th data-lang="name">Name</th>
+                        <th data-lang="products">Products</th>
+                        <th data-lang="actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="categoriesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="purchases-page" style="display: none;">
+        <h1 class="page-title" data-lang="purchases">Purchases</h1>
+        <div class="card">
+            <div class="purchase-actions">
+                <button class="btn btn-primary" id="addNewPurchaseBtn">
+                    <i class="fas fa-plus"></i> <span data-lang="add-purchase">Add Purchase</span>
+                </button>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label for="purchaseDate" data-lang="select-date">Select Date</label>
+                    <input type="date" id="purchaseDate" class="form-control">
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="purchasesTable">
+                    <thead>
+                    <tr>
+                        <th data-lang="name">Name</th>
+                        <th data-lang="quantity">Qty</th>
+                        <th data-lang="price">Price</th>
+                        <th data-lang="cost">Cost</th>
+                        <th data-lang="actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="purchasesTableBody"></tbody>
+                </table>
+            </div>
+            <div class="grand-total">
+                <span data-lang="total-purchases">Total Purchases</span>: <span id="totalPurchases">0 ကျပ်</span>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="reports-page" style="display: none;">
+        <h1 class="page-title" data-lang="reports">Reports</h1>
+        <div class="card">
+            <div class="report-filters">
+                <div class="form-group">
+                    <label for="reportDate" data-lang="date">Date</label>
+                    <input type="date" id="reportDate" class="form-control">
+                </div>
+                <button class="btn btn-primary" id="generateReportBtn">
+                    <i class="fas fa-chart-bar"></i> <span data-lang="generate-report">Generate Report</span>
+                </button>
+                <button class="btn btn-success" id="exportPdfBtn">
+                    <i class="fas fa-file-pdf"></i> <span data-lang="export-pdf">Export PDF</span>
+                </button>
+                <button class="btn btn-success" id="exportCsvBtn">
+                    <i class="fas fa-file-csv"></i> <span data-lang="export-csv">Export CSV</span>
+                </button>
+            </div>
+            <div class="">
+                <h3 data-lang="delete-report-data">Delete Report Data</h3>
+                <br>
+                <div class="form-group">
+                    <label for="deleteDate" data-lang="select-date-to-delete">Select Date to Delete</label>
+                    <input type="date" id="deleteDate" class="form-control">
+                </div>
+                <button class="btn btn-danger" id="deleteDateBtn">
+                    <i class="fas fa-trash"></i> <span data-lang="delete-all-data">Delete All Data for Date</span>
+                </button>
+                <br>
+                <hr>
+                <br>
+                <br>
+                <div class="form-group">
+                    <label for="deleteColumnDate" data-lang="select-date-for-column-deletion">Select Date for Column Deletion</label>
+                    <input type="date" id="deleteColumnDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="deleteColumn" data-lang="select-column-to-delete">Select Column to Delete</label>
+                    <select id="deleteColumn" class="form-control">
+                        <option value="table" data-lang="table">Table</option>
+                        <option value="time" data-lang="time">Time</option>
+                        <option value="items" data-lang="items">Items</option>
+                        <option value="total" data-lang="total">Total</option>
+                    </select>
+                </div>
+                <button class="btn btn-danger" id="deleteColumnBtn">
+                    <i class="fas fa-trash"></i> <span data-lang="delete-column-data">Delete Column Data</span>
+                </button>
+            </div>
+            <br>
+            <div class="report-results" id="reportResults">
+                <p data-lang="select-date-to-view">Select a date and generate a report to view data.</p>
+            </div>
+        </div>
+    </div>
+    <div class="page" id="settings-page" style="display: none;">
+        <h1 class="page-title" data-lang="settings">Settings</h1>
+        <div class="card">
+            <h2 data-lang="language-settings">Language Settings</h2>
+            <div class="form-group">
+                <label for="languageSelect" data-lang="select-language">Select Language</label>
+                <select id="languageSelect" class="form-control">
+                    <option value="en" data-lang="english">English</option>
+                    <option value="my" data-lang="myanmar">Myanmar</option>
+                    <option value="ja" data-lang="japanese">Japanese</option>
+                </select>
+            </div>
+            <br>
+            <h2 data-lang="theme-settings">Theme Settings</h2>
+            <div class="form-group">
+                <button class="btn btn-primary" id="toggleThemeBtn">
+                    <i class="fas fa-moon"></i> <span data-lang="toggle-dark-mode">Toggle Dark Mode</span>
+                </button>
+            </div>
+            <br>
+            <h2 data-lang="password-settings">Password Settings</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="currentPassword" data-lang="current-password">Current Password</label>
+                    <input type="password" id="currentPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword" data-lang="new-password">New Password</label>
+                    <input type="password" id="newPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword" data-lang="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> <span data-lang="change-password">Change Password</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" data-lang="add-new-product">Add New Product</h3> <span class="close">×</span>
+            </div>
+            <form id="productForm">
+                <div class="form-group">
+                    <label for="productName" data-lang="product-name">Product Name</label>
+                    <input type="text" id="productName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="productCategory" data-lang="category">Category</label>
+                    <select id="productCategory" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="productPrice" data-lang="price-kyat">Price (ကျပ်)</label>
+                    <input type="number" id="productPrice" class="form-control" min="0" step="1" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" data-lang="save-product">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2 data-lang="add-new-category">Add New Category</h2>
+            <form id="categoryForm">
+                <div class="form-group">
+                    <label for="newCategoryName" data-lang="category-name">Category Name</label>
+                    <input type="text" id="newCategoryName" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" data-lang="add-category">Add Category</button>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="addPurchaseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" data-lang="add-new-purchase">Add New Purchase</h3> <span class="close">×</span>
+            </div>
+            <form id="purchaseForm">
+                <div class="form-group">
+                    <label for="purchaseItemName" data-lang="item-name">Item Name</label>
+                    <input type="text" id="purchaseItemName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseQuantity" data-lang="quantity">Quantity</label>
+                    <input type="number" id="purchaseQuantity" class="form-control" min="1" step="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseUnitPrice" data-lang="unit-price-kyat">Unit Price (ကျပ်)</label>
+                    <input type="number" id="purchaseUnitPrice" class="form-control" min="0" step="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseDateModal" data-lang="date">Date</label>
+                    <input type="date" id="purchaseDateModal" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" data-lang="save-purchase">Save Purchase</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="editModalTitle" data-lang="edit-item">Edit Item</h3> <span class="close">×</span>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editName" data-lang="name">Name</label>
+                    <input type="text" id="editName" class="form-control" required>
+                </div>
+                <div class="form-group" id="editCategoryGroup">
+                    <label for="editCategory" data-lang="category">Category</label>
+                    <select id="editCategory" class="form-control"></select>
+                </div>
+                <div class="form-group" id="editPriceGroup">
+                    <label for="editPrice" data-lang="price-kyat">Price (ကျပ်)</label>
+                    <input type="number" id="editPrice" class="form-control" min="0" step="1">
+                </div>
+                <div class="form-group" id="editQuantityGroup" style="display: none;">
+                    <label for="editQuantity" data-lang="quantity">Quantity</label>
+                    <input type="number" id="editQuantity" class="form-control" min="1" step="1">
+                </div>
+                <div class="form-group" id="editUnitPriceGroup" style="display: none;">
+                    <label for="editUnitPrice" data-lang="unit-price-kyat">Unit Price (ကျပ်)</label>
+                    <input type="number" id="editUnitPrice" class="form-control" min="0" step="1">
+                </div>
+                <div class="form-group" id="editDateGroup" style="display: none;">
+                    <label for="editDate" data-lang="date">Date</label>
+                    <input type="date" id="editDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" data-lang="save-changes">Save Changes</button>
+                    <button type="button" class="btn btn-danger" id="deleteFromEditBtn" style="display: none;">
+                        <i class="fas fa-trash"></i> <span data-lang="delete">Delete</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="confirmDeleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" data-lang="confirm-delete">Confirm Delete</h3> <span class="close">×</span>
+            </div>
+            <div class="modal-body">
+                <p data-lang="confirm-delete-message">Are you sure you want to delete this item? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteBtn" data-lang="delete">Delete</button>
+                <button class="btn" id="cancelDeleteBtn" data-lang="cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="confirmActionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" data-lang="confirm-action">Confirm Action</h3> <span class="close">×</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirmActionMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="confirmActionBtn" data-lang="confirm">Confirm</button>
+                <button class="btn" id="cancelActionBtn" data-lang="cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="editQuantityModal">
+        <div class="modal-content dynamic-island">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span data-lang="edit-quantity-for">Edit Quantity for</span> <span id="quantityItemName"></span>
+                </h3>
+            </div>
+            <form id="quantityForm">
+                <div class="form-group">
+                    <input type="number" id="quantityInput" class="form-control" min="0" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" data-lang="save">Save</button>
+                    <button type="button" class="btn btn-danger" id="cancelQuantityBtn" data-lang="cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="passwordPromptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" data-lang="enter-password">Enter Password</h3> <span class="close">×</span>
+            </div>
+            <form id="passwordPromptForm">
+                <div class="form-group">
+                    <label for="reportPassword" data-lang="password">Password</label>
+                    <input type="password" id="reportPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" data-lang="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="categoryProducts">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><span data-lang="products-in">Products in</span> <span id="categoryName"></span></h3>
+                <span class="close" id="closeCategoryProducts">×</span>
+            </div>
+            <div class="product-grid" id="categoryProductsGrid">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        ©️ Aung Kaung Myat production
+    </footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', async function() {
+    let currentPage = 'dashboard';
+    let currentTable = null;
+    let currentOrder = null;
+    let products = [];
+    let categories = [];
+    let orders = [];
+    let purchases = [];
+    const currencySymbol = 'ကျပ်';
+    let db;
+    let masterPassword = 'AKM1999';
+    let currentLanguage = 'en';
+    let isDarkMode = false;
+
+    const translations = {
+        en: {
+            dashboard: 'Dashboard',
+            'current-orders': 'Current Orders',
+            products: 'Products',
+            categories: 'Categories',
+            purchases: 'Purchases',
+            reports: 'Reports',
+            settings: 'Settings',
+            orders: 'Orders',
+            'active-tables-parcels': 'Active Tables/Parcels',
+            'sales-revenue': 'Sales Revenue',
+            'net-profit': 'Net Profit',
+            'quick-actions': 'Quick Actions',
+            'new-order': 'New Order',
+            'add-product': 'Add Product',
+            'add-category': 'Add Category',
+            'daily-report': 'Daily Report',
+            'add-purchase': 'Add Purchase',
+            tables: 'Tables',
+            parcels: 'Parcels',
+            'order-for': 'Order for',
+            time: 'Time',
+            'set-time': 'Set Time',
+            'current-time': 'Current Time',
+            'order-items': 'Order Items',
+            name: 'Name',
+            quantity: 'Qty',
+            price: 'Price',
+            total: 'Total',
+            'grand-total': 'Grand Total',
+            'add-products': 'Add Products',
+            'cancel-order': 'Cancel Order',
+            'complete-order': 'Complete Order',
+            'search-products': 'Search products...',
+            category: 'Category',
+            actions: 'Actions',
+            'products-in': 'Products in',
+            'select-date': 'Select Date',
+            cost: 'Cost',
+            'total-purchases': 'Total Purchases',
+            date: 'Date',
+            'generate-report': 'Generate Report',
+            'export-pdf': 'Export PDF',
+            'export-csv': 'Export CSV',
+            'delete-report-data': 'Delete Report Data',
+            'select-date-to-delete': 'Select Date to Delete',
+            'delete-all-data': 'Delete All Data for Date',
+            'select-date-for-column-deletion': 'Select Date for Column Deletion',
+            'select-column-to-delete': 'Select Column to Delete',
+            table: 'Table',
+            items: 'Items',
+            'delete-column-data': 'Delete Column Data',
+            'select-date-to-view': 'Select a date and generate a report to view data.',
+            'language-settings': 'Language Settings',
+            'select-language': 'Select Language',
+            english: 'English',
+            myanmar: 'Myanmar',
+            japanese: 'Japanese',
+            'theme-settings': 'Theme Settings',
+            'toggle-dark-mode': 'Toggle Dark Mode',
+            'toggle-light-mode': 'Toggle Light Mode',
+            'password-settings': 'Password Settings',
+            'current-password': 'Current Password',
+            'new-password': 'New Password',
+            'confirm-password': 'Confirm Password',
+            'change-password': 'Change Password',
+            'add-new-product': 'Add New Product',
+            'product-name': 'Product Name',
+            'price-kyat': 'Price (ကျပ်)',
+            'save-product': 'Save Product',
+            'add-new-category': 'Add New Category',
+            'category-name': 'Category Name',
+            'add-new-purchase': 'Add New Purchase',
+            'item-name': 'Item Name',
+            'unit-price-kyat': 'Unit Price (ကျပ်)',
+            'save-purchase': 'Save Purchase',
+            'edit-item': 'Edit Item',
+            delete: 'Delete',
+            'confirm-delete': 'Confirm Delete',
+            'confirm-delete-message': 'Are you sure you want to delete this item? This action cannot be undone.',
+            'confirm-action': 'Confirm Action',
+            confirm: 'Confirm',
+            cancel: 'Cancel',
+            'edit-quantity-for': 'Edit Quantity for',
+            save: 'Save',
+            'enter-password': 'Enter Password',
+            password: 'Password',
+            submit: 'Submit',
+            edit: 'Edit',
+            view: 'View',
+            'incorrect-password': 'Incorrect password.',
+            'password-mismatch': 'New password and confirm password do not match.',
+            'password-changed': 'Password changed successfully.',
+            'indexeddb-not-supported': 'Your browser does not support IndexedDB.',
+            'database-error': 'Failed to open database.',
+            'data-load-error': 'Failed to load data.',
+            'save-products-error': 'Failed to save products.',
+            'save-categories-error': 'Failed to save categories.',
+            'save-orders-error': 'Failed to save orders.',
+            'save-purchases-error': 'Failed to save purchases.',
+            'save-settings-error': 'Failed to save settings.',
+            'confirm-cancel-order': 'Are you sure you want to cancel this order?',
+            'confirm-complete-order': 'Are you sure you want to complete this order?',
+            'category-in-use': 'Cannot delete category with associated products.',
+            'report-for': 'Report for',
+            'confirm-delete-data': 'Are you sure you want to delete all data for',
+            'data-deleted': 'Data deleted successfully.',
+            'confirm-delete-column': 'Are you sure you want to delete the',
+            'data-for': 'data for',
+            'column-deleted': 'Column data deleted successfully.',
+            'all': 'All',
+            'no-products-in-category': 'No products in this category.',
+            'category-exists': 'Category already exists!',
+            'no-orders-found': 'No completed orders for this date.',
+            'no-purchases-found': 'No purchases for this date.',
+            'no-completed-orders': 'No completed orders for this date.',
+            'no-purchases-for-date': 'No purchases for this date.',
+            'csv-export-not-supported': 'CSV export is not supported in this browser.',
+            'no-data-to-delete': 'No data found for the selected date to delete.',
+            'no-data-to-delete-column': 'No data found for the selected date and column to delete.',
+            'app-init-error': 'Failed to initialize application.'
+        },
+        my: {
+            dashboard: 'Dashbord',
+            'current-orders': 'လက်ရှိအော်ဒါများ',
+            products: 'စားစရာများ',
+            categories: 'အမျိုးအစားများ',
+            purchases: 'ဝယ်ယူမှုများ',
+            reports: 'အစီရင်ခံစာများ',
+            settings: 'ဆက်တင်များ',
+            orders: 'အော်ဒါများ',
+            'active-tables-parcels': 'လက်ရှိစားပွဲ/ပါဆယ်များ',
+            'sales-revenue': 'ရောင်းချမှုဝင်ငွေ',
+            'net-profit': 'အသားတင်အမြတ်',
+            'quick-actions': 'အမြန်လုပ်ဆောင်မှုများ',
+            'new-order': 'အော်ဒါအသစ်',
+            'add-product': 'စားစရာများထည့်ရန်',
+            'add-category': 'အမျိုးအစားထည့်ရန်',
+            'daily-report': 'နေ့စဉ်အစီရင်ခံစာ',
+            'add-purchase': 'ဝယ်ယူမှုထည့်ရန်',
+            tables: 'စားပွဲများ',
+            parcels: 'ပါဆယ်များ',
+            'order-for': 'အော်ဒါအတွက်',
+            time: 'အချိန်',
+            'set-time': 'အချိန်သတ်မှတ်ရန်',
+            'current-time': 'လက်ရှိအချိန်',
+            'order-items': 'အော်ဒါပစ္စည်းများ',
+            name: 'အမည်',
+            quantity: 'အရေအတွက်',
+            price: 'စျေးနှုန်း',
+            total: 'စုစုပေါင်း',
+            'grand-total': 'စုစုပေါင်းချုပ်',
+            'add-products': 'စားစရာများထည့်ရန်',
+            'cancel-order': 'အော်ဒါဖျက်ရန်',
+            'complete-order': 'အော်ဒါပြီးစီးရန်',
+            'search-products': 'စားစရာများရှာရန်...',
+            category: 'အမျိုးအစား',
+            actions: 'လုပ်ဆောင်မှုများ',
+            'products-in': 'စားစရာများအတွင်း',
+            'select-date': 'ရက်စွဲရွေးရန်',
+            cost: 'ကုန်ကျစရိတ်',
+            'total-purchases': 'စုစုပေါင်းဝယ်ယူမှုများ',
+            date: 'ရက်စွဲ',
+            'generate-report': 'အစီရင်ခံစာထုတ်ရန်',
+            'export-pdf': 'PDF အဖြစ်ထုတ်ရန်',
+            'export-csv': 'CSV အဖြစ်ထုတ်ရန်',
+            'delete-report-data': 'အစီရင်ခံစာဒေတာဖျက်ရန်',
+            'select-date-to-delete': 'ဖျက်ရန်ရက်စွဲရွေးရန်',
+            'delete-all-data': 'ရက်စွဲအတွက်ဒေတာအားလုံးဖျက်ရန်',
+            'select-date-for-column-deletion': 'ဘော်လံဖျက်ရန်ရက်စွဲရွေးရန်',
+            'select-column-to-delete': 'ဖျက်ရန်ဘော်လံရွေးရန်',
+            table: 'စားပွဲ',
+            items: 'ပစ္စည်းများ',
+            'delete-column-data': 'ဘော်လံဒေတာဖျက်ရန်',
+            'select-date-to-view': 'ဒေတာကြည့်ရန်ရက်စွဲရွေးပြီး အစီရင်ခံစာထုတ်ပါ။',
+            'language-settings': 'ဘာသာစကားဆက်တင်များ',
+            'select-language': 'ဘာသာစကားရွေးရန်',
+            english: 'အင်္ဂလိပ်',
+            myanmar: 'မြန်မာ',
+            japanese: 'ဂျပန်',
+            'theme-settings': 'အပြင်အဆင်ဆက်တင်များ',
+            'toggle-dark-mode': 'အမှောင်မုဒ်ပြောင်းရန်',
+            'toggle-light-mode': 'အလင်းမုဒ်ပြောင်းရန်',
+            'password-settings': 'စကားဝှက်ဆက်တင်များ',
+            'current-password': 'လက်ရှိစကားဝှက်',
+            'new-password': 'စကားဝှက်အသစ်',
+            'confirm-password': 'စကားဝှက်အတည်ပြုရန်',
+            'change-password': 'စကားဝှက်ပြောင်းရန်',
+            'add-new-product': 'စားစရာအသစ်ထည့်ရန်',
+            'product-name': 'စားစရာအမည်',
+            'price-kyat': 'စျေးနှုန်း (ကျပ်)',
+            'save-product': 'စားစရာအမျိုးအစားသိမ်းရန်',
+            'add-new-category': 'အမျိုးအစားအသစ်ထည့်ရန်',
+            'category-name': 'အမျိုးအစားအမည်',
+            'add-new-purchase': 'ဝယ်ယူမှုအသစ်ထည့်ရန်',
+            'item-name': 'ပစ္စည်းအမည်',
+            'unit-price-kyat': 'တစ်ခုချင်းစျေးနှုန်း (ကျပ်)',
+            'save-purchase': 'ဝယ်ယူမှုသိမ်းရန်',
+            'edit-item': 'ပစ္စည်းပြင်ဆင်ရန်',
+            delete: 'ဖျက်ရန်',
+            'confirm-delete': 'ဖျက်ရန်အတည်ပြုရန်',
+            'confirm-delete-message': 'ဤပစ္စည်းကို ဖျက်ရန် သေချာပါသလား။ ဤလုပ်ဆောင်မှုကို ပြန်လည်ဖျက်သိမ်းလို့မရပါ။',
+            'confirm-action': 'လုပ်ဆောင်မှုအတည်ပြုရန်',
+            confirm: 'အတည်ပြုရန်',
+            cancel: 'ဖျက်သိမ်းရန်',
+            'edit-quantity-for': 'အရေအတွက်ပြင်ဆင်ရန်',
+            save: 'သိမ်းရန်',
+            'enter-password': 'စကားဝှက်ထည့်ရန်',
+            password: 'စကားဝှက်',
+            submit: 'တင်သွင်းရန်',
+            edit: 'ပြင်ဆင်ရန်',
+            view: 'ကြည့်ရန်',
+            'incorrect-password': 'စကားဝှက်မှားယွင်းနေပါသည်။',
+            'password-mismatch': 'စကားဝှက်အသစ်နှင့် အတည်ပြုစကားဝှက် မတူညီပါ။',
+            'password-changed': 'စကားဝှက် အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။',
+            'indexeddb-not-supported': 'သင့်ဘရောက်ဆာတွင် IndexedDB ကို မပံ့ပိုးပါ။',
+            'database-error': 'ဒေတာဘေ့စ်ဖွင့်ရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်။',
+            'data-load-error': 'ဒေတာတင်ယူရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်။',
+            'save-products-error': 'စားစရာအမျိုးအစား သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်။',
+            'save-categories-error': 'အမျိုးအစားများ သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်။',
+            'save-orders-error': 'အော်ဒါများ သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်။',
+            'save-purchases-error': 'ဝယ်ယူမှုများ သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်။',
+            'save-settings-error': 'ဆက်တင်များ သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်။',
+            'confirm-cancel-order': 'ဤအော်ဒါကို ဖျက်သိမ်းရန် သေချာပါသလား။',
+            'confirm-complete-order': 'ဤအော်ဒါကို ပြီးစီးရန် သေချာပါသလား။',
+            'category-in-use': 'ထုတ်ကုန်များနှင့် ချိတ်ဆက်ထားသော အမျိုးအစားကို ဖျက်၍မရပါ။',
+            'report-for': 'အတွက် အစီရင်ခံစာ',
+            'confirm-delete-data': 'ဤရက်စွဲအတွက် ဒေတာအားလုံးကို ဖျက်ရန် သေချာပါသလား။',
+            'data-deleted': 'ဒေတာကို အောင်မြင်စွာ ဖျက်လိုက်ပါပြီ။',
+            'confirm-delete-column': 'သင်သည်',
+            'data-for': 'ဒေတာကို ဖျက်ရန် သေချာပါသလား။',
+            'column-deleted': 'ကော်လံဒေတာကို အောင်မြင်စွာ ဖျက်လိုက်ပါပြီ။',
+            'all': 'အားလုံး',
+            'no-products-in-category': 'ဤအမျိုးအစားတွင် ထုတ်ကုန်များမရှိပါ။',
+            'category-exists': 'အမျိုးအစားရှိပြီးသားဖြစ်ပါသည်။',
+            'no-orders-found': 'ဤရက်စွဲအတွက် ပြီးစီးသောအော်ဒါများမရှိပါ။',
+            'no-purchases-found': 'ဤရက်စွဲအတွက် ဝယ်ယူမှုများမရှိပါ။',
+            'no-completed-orders': 'ဤရက်စွဲအတွက် ပြီးစီးသောအော်ဒါများမရှိပါ။',
+            'no-purchases-for-date': 'ဤရက်စွဲအတွက် ဝယ်ယူမှုများမရှိပါ။',
+            'csv-export-not-supported': 'ဤဘရောက်ဆာတွင် CSV ထုတ်ယူခြင်းကို မပံ့ပိုးပါ။',
+            'no-data-to-delete': 'ရွေးချယ်ထားသောရက်စွဲအတွက် ဖျက်ရန်ဒေတာမတွေ့ပါ။',
+            'no-data-to-delete-column': 'ရွေးချယ်ထားသောရက်စွဲနှင့်ကော်လံအတွက် ဖျက်ရန်ဒေတာမတွေ့ပါ။',
+            'app-init-error': 'အပလီကေးရှင်းစတင်ရာတွင် အမှားအယွင်းရှိခဲ့ပါသည်'
+        },
+        ja: {
+            dashboard: 'ダッシュボード',
+            'current-orders': '現在の注文',
+            products: '製品',
+            categories: 'カテゴリー',
+            purchases: '購入',
+            reports: 'レポート',
+            settings: '設定',
+            orders: '注文',
+            'active-tables-parcels': 'アクティブなテーブル/パーセル',
+            'sales-revenue': '売上収益',
+            'net-profit': '純利益',
+            'quick-actions': 'クイックアクション',
+            'new-order': '新規注文',
+            'add-product': '製品を追加',
+            'add-category': 'カテゴリーを追加',
+            'daily-report': '日報',
+            'add-purchase': '購入を追加',
+            tables: 'テーブル',
+            parcels: 'パーセル',
+            'order-for': '注文対象',
+            time: '時間',
+            'set-time': '時間を設定',
+            'current-time': '現在の時間',
+            'order-items': '注文アイテム',
+            name: '名前',
+            quantity: '数量',
+            price: '価格',
+            total: '合計',
+            'grand-total': '総計',
+            'add-products': '製品を追加',
+            'cancel-order': '注文をキャンセル',
+            'complete-order': '注文を完了',
+            'search-products': '製品を検索...',
+            category: 'カテゴリー',
+            actions: 'アクション',
+            'products-in': '内の製品',
+            'select-date': '日付を選択',
+            cost: 'コスト',
+            'total-purchases': '総購入額',
+            date: '日付',
+            'generate-report': 'レポートを生成',
+            'export-pdf': 'PDFにエクスポート',
+            'export-csv': 'CSVにエクスポート',
+            'delete-report-data': 'レポートデータを削除',
+            'select-date-to-delete': '削除する日付を選択',
+            'delete-all-data': '日付のすべてのデータを削除',
+            'select-date-for-column-deletion': '列削除の日付を選択',
+            'select-column-to-delete': '削除する列を選択',
+            table: 'テーブル',
+            items: 'アイテム',
+            'delete-column-data': '列データを削除',
+            'select-date-to-view': '日付を選択してレポートを生成し、データを表示します。',
+            'language-settings': '言語設定',
+            'select-language': '言語を選択',
+            english: '英語',
+            myanmar: 'ミャンマー',
+            japanese: '日本語',
+            'theme-settings': 'テーマ設定',
+            'toggle-dark-mode': 'ダークモードを切り替え',
+            'toggle-light-mode': 'ライトモードを切り替え',
+            'password-settings': 'パスワード設定',
+            'current-password': '現在のパスワード',
+            'new-password': '新しいパスワード',
+            'confirm-password': 'パスワードの確認',
+            'change-password': 'パスワードを変更',
+            'add-new-product': '新しい製品を追加',
+            'product-name': '製品名',
+            'price-kyat': '価格（チャット）',
+            'save-product': '製品を保存',
+            'add-new-category': '新しいカテゴリーを追加',
+            'category-name': 'カテゴリー名',
+            'add-new-purchase': '新しい購入を追加',
+            'item-name': 'アイテム名',
+            'unit-price-kyat': '単価（チャット）',
+            'save-purchase': '購入を保存',
+            'edit-item': 'アイテムを編集',
+            delete: '削除',
+            'confirm-delete': '削除の確認',
+            'confirm-delete-message': 'このアイテムを削除してもよろしいですか？この操作は元に戻せません。',
+            'confirm-action': 'アクションの確認',
+            confirm: '確認',
+            cancel: 'キャンセル',
+            'edit-quantity-for': '数量を編集',
+            save: '保存',
+            'enter-password': 'パスワードを入力',
+            password: 'パスワード',
+            submit: '送信',
+            edit: '編集',
+            view: '表示',
+            'incorrect-password': 'パスワードが正しくありません。',
+            'password-mismatch': '新しいパスワードと確認用パスワードが一致しません。',
+            'password-changed': 'パスワードが正常に変更されました。',
+            'indexeddb-not-supported': 'お使いのブラウザはIndexedDBをサポートしていません。',
+            'database-error': 'データベースを開く際にエラーが発生しました。',
+            'data-load-error': 'データの読み込みに失敗しました。',
+            'save-products-error': '製品の保存に失敗しました。',
+            'save-categories-error': 'カテゴリーの保存に失敗しました。',
+            'save-orders-error': '注文の保存に失敗しました。',
+            'save-purchases-error': '購入の保存に失敗しました。',
+            'save-settings-error': '設定の保存に失敗しました。',
+            'confirm-cancel-order': 'この注文をキャンセルしてもよろしいですか？',
+            'confirm-complete-order': 'この注文を完了してもよろしいですか？',
+            'category-in-use': '関連する製品があるカテゴリーは削除できません。',
+            'report-for': 'のレポート',
+            'confirm-delete-data': 'この日付のすべてのデータを削除してもよろしいですか？',
+            'data-deleted': 'データは正常に削除されました。',
+            'confirm-delete-column': 'この日付の',
+            'data-for': 'データを削除してもよろしいですか？',
+            'column-deleted': '列データは正常に削除されました。',
+            'all': 'すべて',
+            'no-products-in-category': 'このカテゴリーに製品はありません。',
+            'category-exists': 'カテゴリーは既に存在します！',
+            'no-orders-found': 'この日付の完了した注文はありません。',
+            'no-purchases-found': 'この日付の購入はありません。',
+            'no-completed-orders': 'この日付の完了した注文はありません。',
+            'no-purchases-for-date': 'この日付の購入はありません。',
+            'csv-export-not-supported': 'このブラウザではCSVエクスポートはサポートされていません。',
+            'no-data-to-delete': '選択した日付に削除するデータが見つかりませんでした。',
+            'no-data-to-delete-column': '選択した日付と列に削除するデータが見つかりませんでした。',
+            'app-init-error': 'アプリケーションの初期化に失敗しました。'
+        }
+    };
+
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    const pages = document.querySelectorAll('.page');
+    const sidebarLinks = document.querySelectorAll('.sidebar-menu li');
+
+    async function initDB() {
+        return new Promise((resolve, reject) => {
+            if (!window.indexedDB) {
+                console.error('IndexedDB not supported');
+                alert(translations[currentLanguage]['indexeddb-not-supported'] || 'Your browser does not support IndexedDB.');
+                resolve(null);
+                return;
+            }
+
+            const request = indexedDB.open('test0333113', 23); // Increment version number for schema changes
+
+            request.onupgradeneeded = function(event) {
+                db = event.target.result;
+                if (!db.objectStoreNames.contains('products')) {
+                    db.createObjectStore('products', { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains('categories')) {
+                    db.createObjectStore('categories', { keyPath: 'name' }); // Categories stored as {name: 'CategoryName'}
+                }
+                if (!db.objectStoreNames.contains('orders')) {
+                    db.createObjectStore('orders', { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains('purchases')) {
+                    db.createObjectStore('purchases', { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains('settings')) {
+                    db.createObjectStore('settings', { keyPath: 'key' });
+                }
+            };
+
+            request.onsuccess = function(event) {
+                db = event.target.result;
+                resolve(db);
+            };
+
+            request.onerror = function(event) {
+                console.error('Database error:', event.target.errorCode);
+                alert(translations[currentLanguage]['database-error'] || 'Failed to open database.');
+                reject(event.target.error);
+            };
+        });
+    }
+
+    async function loadData() {
+        try {
+            if (!db) {
+                // Fallback for no IndexedDB or error, initialize with default data
+                products = [
+                    { id: 1, name: 'Burger', category: 'Food', price: 5000 },
+                    { id: 2, name: 'Pizza', category: 'Food', price: 8000 },
+                    { id: 3, name: 'Fries', category: 'Food', price: 2000 },
+                    { id: 4, name: 'Soda', category: 'Drink', price: 1000 },
+                    { id: 5, name: 'Water', category: 'Drink', price: 500 },
+                    { id: 6, name: 'Beer', category: 'Drink', price: 3000 }
+                ];
+                categories = ['Food', 'Drink', 'Dessert'];
+                orders = [];
+                purchases = [];
+                // If db is not initialized, data won't be saved persistently on first load,
+                // but the app will still function with in-memory data.
+                return;
+            }
+
+            products = await getAllFromStore('products');
+            if (products.length === 0) {
+                products = [
+                    { id: 1, name: 'Burger', category: 'Food', price: 5000 },
+                    { id: 2, name: 'Pizza', category: 'Food', price: 8000 },
+                    { id: 3, name: 'Fries', category: 'Food', price: 2000 },
+                    { id: 4, name: 'Soda', category: 'Drink', price: 1000 },
+                    { id: 5, name: 'Water', category: 'Drink', price: 500 },
+                    { id: 6, name: 'Beer', category: 'Drink', price: 3000 }
+                ];
+                await saveProducts();
+            }
+
+            const loadedCategories = await getAllFromStore('categories');
+            if (loadedCategories.length === 0) {
+                categories = ['Food', 'Drink', 'Dessert'];
+                await saveCategories();
+            } else {
+                categories = loadedCategories.map(item => item.name);
+            }
+
+            orders = await getAllFromStore('orders');
+            purchases = await getAllFromStore('purchases');
+            const settings = await getAllFromStore('settings');
+            const langSetting = settings.find(s => s.key === 'language');
+            const themeSetting = settings.find(s => s.key === 'theme');
+            const passwordSetting = settings.find(s => s.key === 'password');
+            currentLanguage = langSetting ? langSetting.value : 'en';
+            isDarkMode = themeSetting ? themeSetting.value === 'dark' : false;
+            masterPassword = passwordSetting ? passwordSetting.value : 'AKM1999';
+            applyLanguage();
+            applyTheme();
+        } catch (error) {
+            console.error('Error loading data:', error);
+            alert(translations[currentLanguage]['data-load-error'] || 'Failed to load data.');
+        }
+    }
+
+    async function getAllFromStore(storeName) {
+        return new Promise((resolve, reject) => {
+            if (!db) {
+                reject(new Error('Database not initialized.'));
+                return;
+            }
+            const transaction = db.transaction([storeName], 'readonly');
+            const store = transaction.objectStore(storeName);
+            const request = store.getAll();
+
+            request.onsuccess = function() {
+                resolve(request.result);
+            };
+
+            request.onerror = function() {
+                reject(request.error);
+            };
+        });
+    }
+
+    async function saveToStore(storeName, data) {
+        return new Promise((resolve, reject) => {
+            if (!db) {
+                reject(new Error('Database not initialized.'));
+                return;
+            }
+            const transaction = db.transaction([storeName], 'readwrite');
+            const store = transaction.objectStore(storeName);
+            const dataToPut = Array.isArray(data) ? data : [data];
+            let completedRequests = 0;
+            const totalRequests = dataToPut.length;
+
+            if (totalRequests === 0) {
+                resolve();
+                return;
+            }
+
+            dataToPut.forEach(item => {
+                const request = store.put(item);
+                request.onsuccess = () => {
+                    completedRequests++;
+                    if (completedRequests === totalRequests) {
+                        resolve();
+                    }
+                };
+                request.onerror = () => {
+                    reject(request.error);
+                };
+            });
+
+            transaction.oncomplete = function() {
+                resolve();
+            };
+
+            transaction.onerror = function() {
+                reject(transaction.error);
+            };
+        });
+    }
+
+    async function deleteFromStore(storeName, key) {
+        return new Promise((resolve, reject) => {
+            if (!db) {
+                reject(new Error('Database not initialized.'));
+                return;
+            }
+            const transaction = db.transaction([storeName], 'readwrite');
+            const store = transaction.objectStore(storeName);
+            const request = store.delete(key);
+
+            request.onsuccess = function() {
+                resolve();
+            };
+
+            request.onerror = function() {
+                reject(request.error);
+            };
+        });
+    }
+
+    async function saveProducts() {
+        try {
+            if (db) await saveToStore('products', products);
+        } catch (error) {
+            console.error('Error saving products:', error);
+            alert(translations[currentLanguage]['save-products-error'] || 'Failed to save products.');
+        }
+    }
+
+    async function saveCategories() {
+        try {
+            if (db) {
+                const categoryObjects = categories.map(name => ({ name }));
+                await saveToStore('categories', categoryObjects);
+            }
+        } catch (error) {
+            console.error('Error saving categories:', error);
+            alert(translations[currentLanguage]['save-categories-error'] || 'Failed to save categories.');
+        }
+    }
+
+    async function saveOrders() {
+        try {
+            if (db) await saveToStore('orders', orders);
+        } catch (error) {
+            console.error('Error saving orders:', error);
+            alert(translations[currentLanguage]['save-orders-error'] || 'Failed to save orders.');
+        }
+    }
+
+    async function savePurchases() {
+        try {
+            if (db) await saveToStore('purchases', purchases);
+        } catch (error) {
+            console.error('Error saving purchases:', error);
+            alert(translations[currentLanguage]['save-purchases-error'] || 'Failed to save purchases.');
+        }
+    }
+
+    async function saveSettings() {
+        try {
+            if (db) {
+                const settings = [
+                    { key: 'language', value: currentLanguage },
+                    { key: 'theme', value: isDarkMode ? 'dark' : 'light' },
+                    { key: 'password', value: masterPassword }
+                ];
+                await saveToStore('settings', settings);
+            }
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            alert(translations[currentLanguage]['save-settings-error'] || 'Failed to save settings.');
+        }
+    }
+
+    function applyLanguage() {
+        document.querySelectorAll('[data-lang]').forEach(element => {
+            const key = element.getAttribute('data-lang');
+            if (translations[currentLanguage][key]) {
+                element.textContent = translations[currentLanguage][key];
+            }
+        });
+        document.querySelectorAll('[data-lang-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-lang-placeholder');
+            if (translations[currentLanguage][key]) {
+                element.placeholder = translations[currentLanguage][key];
+            }
+        });
+        // Ensure the language select reflects the current language
+        const languageSelect = document.getElementById('languageSelect');
+        if (languageSelect) {
+            languageSelect.value = currentLanguage;
+        }
+        updateUI(); // Re-render UI elements that depend on text content (like table headers)
+    }
+
+    function applyTheme() {
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            document.querySelectorAll('.page, .card, .modal-content, .table-card, .product-card, .report-results, .delete-actions, .dynamic-island, td, .form-control').forEach(el => {
+                el.classList.add('dark-mode');
+            });
+            const toggleThemeBtn = document.getElementById('toggleThemeBtn');
+            if (toggleThemeBtn) {
+                toggleThemeBtn.innerHTML = '<i class="fas fa-sun"></i> ' + (translations[currentLanguage]['toggle-light-mode'] || 'Toggle Light Mode');
+            }
+        } else {
+            document.body.classList.remove('dark-mode');
+            document.querySelectorAll('.page, .card, .modal-content, .table-card, .product-card, .report-results, .delete-actions, .dynamic-island, td, .form-control').forEach(el => {
+                el.classList.remove('dark-mode');
+            });
+            const toggleThemeBtn = document.getElementById('toggleThemeBtn');
+            if (toggleThemeBtn) {
+                toggleThemeBtn.innerHTML = '<i class="fas fa-moon"></i> ' + (translations[currentLanguage]['toggle-dark-mode'] || 'Toggle Dark Mode');
+            }
+        }
+    }
+
+    function showPage(pageId) {
+        pages.forEach(page => page.style.display = page.id === `${pageId}-page` ? 'block' : 'none');
+        sidebarLinks.forEach(link => link.classList.toggle('active', link.getAttribute('data-page') === pageId));
+        currentPage = pageId;
+
+        // Implement password prompt for reports page
+        if (pageId === 'reports') {
+            showPasswordPrompt(() => {
+                updateUI(); // Only update UI if password is correct
+            }, () => {
+                // If password is incorrect or cancelled, redirect to dashboard or previous page
+                showPage('dashboard');
+            });
+        } else {
+            updateUI();
+        }
+    }
+
+    function updateUI() {
+        if (currentPage === 'dashboard') {
+            updateDashboard();
+        } else if (currentPage === 'current-orders') {
+            updateTablesAndParcels();
+            document.getElementById('orderDetails').style.display = 'none'; // Hide order details by default
+        } else if (currentPage === 'products') {
+            updateProductsTable();
+        } else if (currentPage === 'categories') {
+            updateCategoriesTable();
+            // document.getElementById('categoryProducts').style.display = 'none'; // Keep this hidden by default
+        } else if (currentPage === 'purchases') {
+            updatePurchasesTable();
+        } else if (currentPage === 'reports') {
+            updateReports();
+        } else if (currentPage === 'settings') {
+            // No specific UI update needed beyond initial render for settings page
+        }
+        applyTheme(); // Reapply theme after UI updates
+    }
+
+    function updateDashboard() {
+        const totalOrders = orders.filter(order => order.status === 'completed').length;
+        const activeTables = orders.filter(order => order.status === 'active' && !order.isParcel).length;
+        const activeParcels = orders.filter(order => order.status === 'active' && order.isParcel).length;
+        const salesRevenue = orders.filter(order => order.status === 'completed').reduce((sum, order) => sum + order.total, 0);
+        const totalPurchasesCost = purchases.reduce((sum, purchase) => sum + (purchase.quantity * purchase.unitPrice), 0);
+        const netProfit = salesRevenue - totalPurchasesCost;
+
+        document.getElementById('total-orders').textContent = totalOrders;
+        document.getElementById('active-tables').textContent = `${activeTables + activeParcels}/32`; // Assuming 16 tables + 16 parcels = 32 slots
+        document.getElementById('sales-revenue').textContent = `${salesRevenue} ${currencySymbol}`;
+        document.getElementById('net-profit').textContent = `${netProfit} ${currencySymbol}`;
+    }
+
+    function updateTablesAndParcels() {
+        const tablesGrid = document.getElementById('tablesGrid');
+        const parcelsGrid = document.getElementById('parcelsGrid');
+        tablesGrid.innerHTML = '';
+        parcelsGrid.innerHTML = '';
+
+        // Render tables
+        for (let i = 1; i <= 16; i++) {
+            const tableCard = document.createElement('div');
+            tableCard.className = 'table-card';
+            tableCard.innerHTML = `<div class="table-number">${translations[currentLanguage]['table'] || 'Table'} ${i}</div>`;
+            const tableOrder = orders.find(order => order.table === `Table ${i}` && order.status === 'active' && !order.isParcel);
+            if (tableOrder) {
+                tableCard.classList.add('active');
+            }
+            tableCard.addEventListener('click', () => showOrderDetails(`Table ${i}`, false));
+            tablesGrid.appendChild(tableCard);
+        }
+
+        // Render parcels
+        for (let i = 1; i <= 16; i++) {
+            const parcelCard = document.createElement('div');
+            parcelCard.className = 'table-card';
+            parcelCard.innerHTML = `<div class="table-number">${translations[currentLanguage]['parcel'] || 'Parcel'} ${i}</div>`;
+            const parcelOrder = orders.find(order => order.table === `Parcel ${i}` && order.status === 'active' && order.isParcel);
+            if (parcelOrder) {
+                parcelCard.classList.add('active');
+            }
+            parcelCard.addEventListener('click', () => showOrderDetails(`Parcel ${i}`, true));
+            parcelsGrid.appendChild(parcelCard);
+        }
+        applyTheme(); // Apply dark mode to newly created elements
+    }
+
+    function showOrderDetails(table, isParcel) {
+        currentTable = table;
+        currentOrder = orders.find(order => order.table === table && order.status === 'active' && order.isParcel === isParcel);
+        if (!currentOrder) {
+            currentOrder = {
+                id: Date.now(),
+                table,
+                isParcel,
+                items: [],
+                total: 0,
+                status: 'active',
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toISOString().split('T')[0] // Add current date to order
+            };
+            orders.push(currentOrder);
+            saveOrders();
+        }
+
+        document.getElementById('currentTableNumber').textContent = table;
+        document.getElementById('orderTimeDisplay').textContent = currentOrder.time;
+        document.getElementById('orderTime').value = currentOrder.time;
+        document.getElementById('orderDetails').style.display = 'block';
+        updateOrderItems();
+        updateCategoryTabs();
+        updateProductsGrid();
+        applyTheme();
+    }
+
+    function updateOrderItems() {
+        const orderItems = document.getElementById('orderItems');
+        orderItems.innerHTML = '';
+        currentOrder.items.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td class="quantity" data-id="${item.id}">${item.quantity}</td>
+                <td>${item.price} ${currencySymbol}</td>
+                <td>${item.quantity * item.price} ${currencySymbol}</td>
+            `;
+            // Add click listener for quantity
+            row.querySelector('.quantity').addEventListener('click', () => editQuantity(item));
+            orderItems.appendChild(row);
+        });
+        document.getElementById('orderTotal').textContent = `${currentOrder.total} ${currencySymbol}`;
+        applyTheme();
+    }
+
+    function updateCategoryTabs() {
+        const categoryTabs = document.getElementById('categoryTabs');
+        categoryTabs.innerHTML = '';
+        const allTab = document.createElement('div');
+        allTab.className = 'category-tab active';
+        allTab.textContent = translations[currentLanguage]['all'] || 'All';
+        allTab.addEventListener('click', () => {
+            categoryTabs.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            allTab.classList.add('active');
+            updateProductsGrid();
+            applyTheme();
+        });
+        categoryTabs.appendChild(allTab);
+
+        categories.forEach(category => {
+            const tab = document.createElement('div');
+            tab.className = 'category-tab';
+            tab.textContent = category;
+            tab.addEventListener('click', () => {
+                categoryTabs.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+                tab.classList.add('active');
+                updateProductsGrid(category);
+                applyTheme();
+            });
+            categoryTabs.appendChild(tab);
+        });
+        applyTheme();
+    }
+
+    function updateProductsGrid(category = null) {
+        const productsGrid = document.getElementById('productsGrid');
+        productsGrid.innerHTML = '';
+        const filteredProducts = category ? products.filter(p => p.category === category) : products;
+        filteredProducts.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="product-name">${product.name}</div>
+                <div class="product-price">${product.price} ${currencySymbol}</div>
+                <div class="product-category">${product.category}</div>
+            `;
+            card.addEventListener('click', () => addProductToOrder(product));
+            productsGrid.appendChild(card);
+        });
+        applyTheme();
+    }
+
+    function addProductToOrder(product) {
+        const existingItem = currentOrder.items.find(item => item.id === product.id);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            currentOrder.items.push({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                quantity: 1
+            });
+        }
+        currentOrder.total = currentOrder.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+        saveOrders();
+        updateOrderItems();
+    }
+
+    function editQuantity(item) {
+        document.getElementById('quantityItemName').textContent = item.name;
+        document.getElementById('quantityInput').value = item.quantity;
+        document.getElementById('editQuantityModal').style.display = 'flex';
+        applyTheme();
+
+        document.getElementById('quantityForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const newQuantity = parseInt(document.getElementById('quantityInput').value);
+            if (newQuantity === 0) {
+                currentOrder.items = currentOrder.items.filter(i => i.id !== item.id);
+            } else {
+                item.quantity = newQuantity;
+            }
+            currentOrder.total = currentOrder.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            await saveOrders();
+            updateOrderItems();
+            document.getElementById('editQuantityModal').style.display = 'none';
+        };
+    }
+
+    function updateProductsTable() {
+        const tableBody = document.getElementById('productsTableBody');
+        tableBody.innerHTML = '';
+        const searchQuery = document.getElementById('productSearch').value.toLowerCase();
+        products.filter(product => product.name.toLowerCase().includes(searchQuery)).forEach(product => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${product.name}</td>
+                <td><span class="category-badge">${product.category}</span></td>
+                <td>${product.price} ${currencySymbol}</td>
+                <td>
+                    <button class="action-btn btn-primary" data-id="${product.id}">${translations[currentLanguage]['edit'] || 'Edit'}</button>
+                </td>
+            `;
+            row.querySelector('.btn-primary').addEventListener('click', () => editProduct(product.id));
+            tableBody.appendChild(row);
+        });
+        applyTheme();
+    }
+
+    function updateCategoriesTable() {
+        const tableBody = document.getElementById('categoriesTableBody');
+        tableBody.innerHTML = '';
+        categories.forEach(category => {
+            const productCount = products.filter(p => p.category === category).length;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><span class="category-badge">${category}</span></td>
+                <td>${productCount}</td>
+                <td>
+                    <button class="action-btn btn-primary" data-name="${category}">${translations[currentLanguage]['edit'] || 'Edit'}</button>
+                </td>
+            `;
+            row.querySelector('.btn-primary').addEventListener('click', () => editCategory(category));
+            tableBody.appendChild(row);
+        });
+        applyTheme();
+    }
+
+    function showCategoryProducts(category) {
+        document.getElementById('categoryName').textContent = category;
+        const productsGrid = document.getElementById('categoryProductsGrid');
+        productsGrid.innerHTML = '';
+        const filteredProducts = products.filter(p => p.category === category);
+        if (filteredProducts.length === 0) {
+            productsGrid.innerHTML = `<p>${translations[currentLanguage]['no-products-in-category'] || 'No products in this category.'}</p>`;
+        } else {
+            filteredProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">${product.price} ${currencySymbol}</div>
+                `;
+                productsGrid.appendChild(card);
+            });
+        }
+        document.getElementById('categoryProducts').style.display = 'flex'; // Use flex to center
+        applyTheme();
+    }
+
+    function updatePurchasesTable() {
+        const tableBody = document.getElementById('purchasesTableBody');
+        tableBody.innerHTML = '';
+        const selectedDate = document.getElementById('purchaseDate').value;
+        let filteredPurchases = purchases;
+        if (selectedDate) {
+            filteredPurchases = purchases.filter(p => p.date === selectedDate);
+        }
+        filteredPurchases.forEach(purchase => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${purchase.name}</td>
+                <td>${purchase.quantity}</td>
+                <td>${purchase.unitPrice} ${currencySymbol}</td>
+                <td>${purchase.quantity * purchase.unitPrice} ${currencySymbol}</td>
+                <td>
+                    <button class="action-btn btn-primary" data-id="${purchase.id}">${translations[currentLanguage]['edit'] || 'Edit'}</button>
+                </td>
+            `;
+            row.querySelector('.btn-primary').addEventListener('click', () => editPurchase(purchase.id));
+            tableBody.appendChild(row);
+        });
+        const total = filteredPurchases.reduce((sum, p) => sum + (p.quantity * p.unitPrice), 0);
+        document.getElementById('totalPurchases').textContent = `${total} ${currencySymbol}`;
+        applyTheme();
+    }
+
+    function updateReports() {
+        const reportResults = document.getElementById('reportResults');
+        reportResults.innerHTML = `<p>${translations[currentLanguage]['select-date-to-view'] || 'Select a date and generate a report to view data.'}</p>`;
+        applyTheme();
+    }
+
+    function addProduct() {
+        const modal = document.getElementById('addProductModal');
+        modal.style.display = 'flex';
+        const categorySelect = document.getElementById('productCategory');
+        categorySelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        document.getElementById('productForm').reset();
+        applyTheme();
+    }
+
+    function editProduct(id) {
+        const product = products.find(p => p.id === id);
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'flex';
+        document.getElementById('editModalTitle').textContent = translations[currentLanguage]['edit-product'] || 'Edit Product';
+        document.getElementById('editName').value = product.name;
+        const categorySelect = document.getElementById('editCategory');
+        categorySelect.innerHTML = categories.map(c => `<option value="${c}" ${c === product.category ? 'selected' : ''}>${c}</option>`).join('');
+        document.getElementById('editPrice').value = product.price;
+
+        // Show/hide relevant fields for product
+        document.getElementById('editCategoryGroup').style.display = 'block';
+        document.getElementById('editPriceGroup').style.display = 'block';
+        document.getElementById('editQuantityGroup').style.display = 'none';
+        document.getElementById('editUnitPriceGroup').style.display = 'none';
+        document.getElementById('editDateGroup').style.display = 'none';
+
+        document.getElementById('deleteFromEditBtn').style.display = 'inline-block'; // Allow deleting from edit modal
+
+        document.getElementById('editForm').onsubmit = async function(e) {
+            e.preventDefault();
+            product.name = document.getElementById('editName').value;
+            product.category = document.getElementById('editCategory').value;
+            product.price = parseInt(document.getElementById('editPrice').value);
+            await saveProducts();
+            updateProductsTable();
+            modal.style.display = 'none';
+        };
+        document.getElementById('deleteFromEditBtn').onclick = () => confirmDelete('product', id);
+        applyTheme();
+    }
+
+    function addCategory() {
+        const modal = document.getElementById('addCategoryModal');
+        modal.style.display = 'flex';
+        document.getElementById('categoryForm').reset();
+        applyTheme();
+    }
+
+    function editCategory(name) {
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'flex';
+        document.getElementById('editModalTitle').textContent = translations[currentLanguage]['edit-category'] || 'Edit Category';
+        document.getElementById('editName').value = name;
+
+        // Hide irrelevant fields for category
+        document.getElementById('editCategoryGroup').style.display = 'none';
+        document.getElementById('editPriceGroup').style.display = 'none';
+        document.getElementById('editQuantityGroup').style.display = 'none';
+        document.getElementById('editUnitPriceGroup').style.display = 'none';
+        document.getElementById('editDateGroup').style.display = 'none';
+
+        document.getElementById('deleteFromEditBtn').style.display = 'inline-block'; // Allow deleting from edit modal
+
+        // Add view products button
+        const viewProductsBtn = document.createElement('button');
+        viewProductsBtn.className = 'btn btn-primary action-btn';
+        viewProductsBtn.textContent = translations[currentLanguage]['view'] || 'View';
+        viewProductsBtn.type = 'button'; // Important: prevent form submission
+        viewProductsBtn.onclick = () => {
+            showCategoryProducts(name);
+            modal.style.display = 'none'; // Close edit modal after viewing
+        };
+
+        const formGroup = document.getElementById('editForm').querySelector('.form-group:last-of-type');
+        // Check if the button already exists to prevent duplicates
+        if (!formGroup.querySelector('.action-btn.btn-primary[type="button"]')) {
+            formGroup.insertBefore(viewProductsBtn, document.getElementById('deleteFromEditBtn'));
+        }
+
+
+        document.getElementById('editForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const newName = document.getElementById('editName').value;
+            if (newName !== name && categories.includes(newName)) {
+                alert(translations[currentLanguage]['category-exists'] || 'Category with this name already exists.');
+                return;
+            }
+            if (newName !== name) {
+                // Update category name in products
+                products.forEach(p => {
+                    if (p.category === name) {
+                        p.category = newName;
+                    }
+                });
+                const index = categories.indexOf(name);
+                if (index > -1) {
+                    categories[index] = newName;
+                }
+                await saveProducts();
+                await saveCategories();
+            }
+            updateCategoriesTable();
+            modal.style.display = 'none';
+            // Remove the dynamically added viewProductsBtn to prevent duplicates
+            if(viewProductsBtn.parentNode) {
+                viewProductsBtn.parentNode.removeChild(viewProductsBtn);
+            }
+        };
+        document.getElementById('deleteFromEditBtn').onclick = () => {
+            // Remove the dynamically added viewProductsBtn to prevent duplicates before showing confirm delete
+            if(viewProductsBtn.parentNode) {
+                viewProductsBtn.parentNode.removeChild(viewProductsBtn);
+            }
+            confirmDelete('category', name);
+        };
+        applyTheme();
+    }
+
+
+    function addPurchase() {
+        const modal = document.getElementById('addPurchaseModal');
+        modal.style.display = 'flex';
+        document.getElementById('purchaseDateModal').value = new Date().toISOString().split('T')[0];
+        document.getElementById('purchaseForm').reset();
+        applyTheme();
+    }
+
+    function editPurchase(id) {
+        const purchase = purchases.find(p => p.id === id);
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'flex';
+        document.getElementById('editModalTitle').textContent = translations[currentLanguage]['edit-purchase'] || 'Edit Purchase';
+        document.getElementById('editName').value = purchase.name;
+        document.getElementById('editQuantity').value = purchase.quantity;
+        document.getElementById('editUnitPrice').value = purchase.unitPrice;
+        document.getElementById('editDate').value = purchase.date;
+
+        // Show/hide relevant fields for purchase
+        document.getElementById('editCategoryGroup').style.display = 'none';
+        document.getElementById('editPriceGroup').style.display = 'none';
+        document.getElementById('editQuantityGroup').style.display = 'block';
+        document.getElementById('editUnitPriceGroup').style.display = 'block';
+        document.getElementById('editDateGroup').style.display = 'block';
+
+        document.getElementById('deleteFromEditBtn').style.display = 'inline-block'; // Allow deleting from edit modal
+
+        document.getElementById('editForm').onsubmit = async function(e) {
+            e.preventDefault();
+            purchase.name = document.getElementById('editName').value;
+            purchase.quantity = parseInt(document.getElementById('editQuantity').value);
+            purchase.unitPrice = parseInt(document.getElementById('editUnitPrice').value);
+            purchase.date = document.getElementById('editDate').value;
+            await savePurchases();
+            updatePurchasesTable();
+            modal.style.display = 'none';
+        };
+        document.getElementById('deleteFromEditBtn').onclick = () => confirmDelete('purchase', id);
+        applyTheme();
+    }
+
+    function confirmDelete(type, id) {
+        const modal = document.getElementById('confirmDeleteModal');
+        modal.style.display = 'flex';
+        applyTheme();
+        document.getElementById('confirmDeleteBtn').onclick = async () => {
+            if (type === 'product') {
+                products = products.filter(p => p.id !== id);
+                await saveProducts();
+                updateProductsTable();
+            } else if (type === 'category') {
+                if (products.some(p => p.category === id)) {
+                    alert(translations[currentLanguage]['category-in-use'] || 'Cannot delete category with associated products.');
+                    modal.style.display = 'none';
+                    return;
+                }
+                categories = categories.filter(c => c !== id);
+                await saveCategories();
+                updateCategoriesTable();
+            } else if (type === 'purchase') {
+                purchases = purchases.filter(p => p.id !== id);
+                await savePurchases();
+                updatePurchasesTable();
+            }
+            modal.style.display = 'none';
+            // Ensure the edit modal is also closed if the delete was initiated from it
+            document.getElementById('editModal').style.display = 'none';
+        };
+    }
+
+    function showPasswordPrompt(onSuccess, onFailure) {
+        const modal = document.getElementById('passwordPromptModal');
+        modal.style.display = 'flex';
+        applyTheme();
+        document.getElementById('passwordPromptForm').reset(); // Clear previous password input
+        document.getElementById('reportPassword').focus(); // Focus on password input
+
+        document.getElementById('passwordPromptForm').onsubmit = function(e) {
+            e.preventDefault();
+            const password = document.getElementById('reportPassword').value;
+            if (password === masterPassword) {
+                modal.style.display = 'none';
+                onSuccess();
+            } else {
+                alert(translations[currentLanguage]['incorrect-password'] || 'Incorrect password.');
+                onFailure();
+            }
+        };
+        // Handle close button for password prompt
+        modal.querySelector('.close').onclick = () => {
+            modal.style.display = 'none';
+            onFailure(); // Treat closing as failure to authenticate
+        };
+    }
+
+    function generateReport() {
+        const date = document.getElementById('reportDate').value;
+        if (!date) {
+            alert(translations[currentLanguage]['select-date'] || 'Please select a date.');
+            return;
+        }
+        const reportOrders = orders.filter(o => o.date === date && o.status === 'completed');
+        const reportPurchases = purchases.filter(p => p.date === date);
+        const reportResults = document.getElementById('reportResults');
+
+        let ordersHtml = `
+            <h4>${translations[currentLanguage]['orders'] || 'Orders'}</h4>
+            ${reportOrders.length > 0 ? `
+            <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>${translations[currentLanguage]['table'] || 'Table'}</th>
+                        <th>${translations[currentLanguage]['time'] || 'Time'}</th>
+                        <th>${translations[currentLanguage]['items'] || 'Items'}</th>
+                        <th>${translations[currentLanguage]['total'] || 'Total'}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${reportOrders.map(o => `
+                        <tr>
+                            <td>${o.table}</td>
+                            <td>${o.time}</td>
+                            <td>${o.items.map(i => `${i.name} x${i.quantity}`).join(', ')}</td>
+                            <td>${o.total} ${currencySymbol}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            </div>
+            ` : `<p>${translations[currentLanguage]['no-orders-found'] || 'No completed orders for this date.'}</p>`}
+        `;
+
+        let purchasesHtml = `
+            <h4>${translations[currentLanguage]['purchases'] || 'Purchases'}</h4>
+            ${reportPurchases.length > 0 ? `
+            <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>${translations[currentLanguage]['name'] || 'Name'}</th>
+                        <th>${translations[currentLanguage]['quantity'] || 'Quantity'}</th>
+                        <th>${translations[currentLanguage]['unit-price'] || 'Unit Price'}</th>
+                        <th>${translations[currentLanguage]['total'] || 'Total'}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${reportPurchases.map(p => `
+                        <tr>
+                            <td>${p.name}</td>
+                            <td>${p.quantity}</td>
+                            <td>${p.unitPrice} ${currencySymbol}</td>
+                            <td>${p.quantity * p.unitPrice} ${currencySymbol}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            </div>
+            ` : `<p>${translations[currentLanguage]['no-purchases-found'] || 'No purchases for this date.'}</p>`}
+        `;
+
+        reportResults.innerHTML = `
+            <h3>${translations[currentLanguage]['report-for'] || 'Report for'} ${date}</h3>
+            ${ordersHtml}
+            ${purchasesHtml}
+        `;
+        applyTheme();
+    }
+
+    function exportPDF() {
+        const date = document.getElementById('reportDate').value;
+        if (!date) {
+            alert(translations[currentLanguage]['select-date'] || 'Please select a date.');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Add report title
+        doc.setFontSize(16);
+        doc.text(`${translations[currentLanguage]['report-for'] || 'Report for'} ${date}`, 10, 10);
+
+        // Orders table
+        const reportOrders = orders.filter(o => o.date === date && o.status === 'completed');
+        if (reportOrders.length > 0) {
+            doc.setFontSize(14);
+            doc.text(translations[currentLanguage]['orders'] || 'Orders', 10, 20);
+            doc.autoTable({
+                startY: 25,
+                head: [[translations[currentLanguage]['table'] || 'Table', translations[currentLanguage]['time'] || 'Time', translations[currentLanguage]['items'] || 'Items', translations[currentLanguage]['total'] || 'Total']],
+                body: reportOrders.map(o => [
+                    o.table,
+                    o.time,
+                    o.items.map(i => `${i.name} x${i.quantity}`).join(', '),
+                    `${o.total} ${currencySymbol}`
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [45, 64, 99] },
+                alternateRowStyles: { fillColor: [245, 245, 245] },
+                styles: { textColor: [40, 42, 55], font: 'arial', fontSize: 10 },
+                columnStyles: {
+                    2: { cellWidth: 70 } // Adjust width for items column
+                }
+            });
+        } else {
+            doc.setFontSize(12);
+            doc.text(translations[currentLanguage]['no-completed-orders'] || 'No completed orders for this date.', 10, 25);
+            doc.lastAutoTable = { finalY: 25 }; // Set a baseline for subsequent elements
+        }
+
+        // Purchases table
+        const reportPurchases = purchases.filter(p => p.date === date);
+        const startYForPurchases = (doc.lastAutoTable ? doc.lastAutoTable.finalY : 10) + 10;
+
+        if (reportPurchases.length > 0) {
+            doc.setFontSize(14);
+            doc.text(translations[currentLanguage]['purchases'] || 'Purchases', 10, startYForPurchases + 5);
+            doc.autoTable({
+                startY: startYForPurchases + 10,
+                head: [[translations[currentLanguage]['name'] || 'Name', translations[currentLanguage]['quantity'] || 'Quantity', translations[currentLanguage]['unit-price'] || 'Unit Price', translations[currentLanguage]['total'] || 'Total']],
+                body: reportPurchases.map(p => [
+                    p.name,
+                    p.quantity,
+                    `${p.unitPrice} ${currencySymbol}`,
+                    `${p.quantity * p.unitPrice} ${currencySymbol}`
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [45, 64, 99] },
+                alternateRowStyles: { fillColor: [245, 245, 245] },
+                styles: { textColor: [40, 42, 55], font: 'arial', fontSize: 10 }
+            });
+        } else {
+            doc.setFontSize(12);
+            doc.text(translations[currentLanguage]['no-purchases-for-date'] || 'No purchases for this date.', 10, startYForPurchases + 5);
+        }
+
+        doc.save(`report_${date}.pdf`);
+    }
+
+    function exportCSV() {
+        const date = document.getElementById('reportDate').value;
+        if (!date) {
+            alert(translations[currentLanguage]['select-date'] || 'Please select a date.');
+            return;
+        }
+        let csv = `"${translations[currentLanguage]['report-for'] || 'Report for'} ${date}"\n\n`;
+
+        // Orders data
+        csv += `"${translations[currentLanguage]['orders'] || 'Orders'}"\n`;
+        csv += `"${translations[currentLanguage]['table'] || 'Table'}","${translations[currentLanguage]['time'] || 'Time'}","${translations[currentLanguage]['items'] || 'Items'}","${translations[currentLanguage]['total'] || 'Total'}"\n`;
+        const reportOrders = orders.filter(o => o.date === date && o.status === 'completed');
+        reportOrders.forEach(o => {
+            const itemsString = o.items.map(i => `${i.name} x${i.quantity}`).join('; '); // Use semicolon to separate items
+            csv += `"${o.table}","${o.time}","${itemsString}","${o.total} ${currencySymbol}"\n`;
+        });
+        if (reportOrders.length === 0) {
+            csv += `"${translations[currentLanguage]['no-completed-orders'] || 'No completed orders for this date.'}"\n`;
+        }
+        csv += `\n`; // Add an empty line for separation
+
+        // Purchases data
+        csv += `"${translations[currentLanguage]['purchases'] || 'Purchases'}"\n`;
+        csv += `"${translations[currentLanguage]['name'] || 'Name'}","${translations[currentLanguage]['quantity'] || 'Quantity'}","${translations[currentLanguage]['unit-price'] || 'Unit Price'}","${translations[currentLanguage]['total'] || 'Total'}"\n`;
+        const reportPurchases = purchases.filter(p => p.date === date);
+        reportPurchases.forEach(p => {
+            csv += `"${p.name}",${p.quantity},"${p.unitPrice} ${currencySymbol}","${p.quantity * p.unitPrice} ${currencySymbol}"\n`;
+        });
+        if (reportPurchases.length === 0) {
+            csv += `"${translations[currentLanguage]['no-purchases-for-date'] || 'No purchases for this date.'}"\n`;
+        }
+
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) { // feature detection
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `report_${date}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        } else {
+            alert(translations[currentLanguage]['csv-export-not-supported'] || 'CSV export is not supported in this browser.');
+        }
+    }
+
+    async function deleteReportData() {
+        const date = document.getElementById('deleteDate').value;
+        if (!date) {
+            alert(translations[currentLanguage]['select-date'] || 'Please select a date.');
+            return;
+        }
+        document.getElementById('confirmActionMessage').textContent = `${translations[currentLanguage]['confirm-delete-data'] || 'Are you sure you want to delete all data for'} ${date}?`;
+        const modal = document.getElementById('confirmActionModal');
+        modal.style.display = 'flex';
+        applyTheme();
+
+        document.getElementById('confirmActionBtn').onclick = async () => {
+            const initialOrdersCount = orders.length;
+            const initialPurchasesCount = purchases.length;
+
+            orders = orders.filter(o => o.date !== date);
+            purchases = purchases.filter(p => p.date !== date);
+
+            await saveOrders();
+            await savePurchases();
+            updateReports(); // Refresh report section
+            modal.style.display = 'none';
+
+            if (orders.length < initialOrdersCount || purchases.length < initialPurchasesCount) {
+                alert(translations[currentLanguage]['data-deleted'] || 'Data deleted successfully.');
+            } else {
+                alert(translations[currentLanguage]['no-data-to-delete'] || 'No data found for the selected date to delete.');
+            }
+        };
+    }
+
+    async function deleteColumnData() {
+        const date = document.getElementById('deleteColumnDate').value;
+        const column = document.getElementById('deleteColumn').value;
+        if (!date) {
+            alert(translations[currentLanguage]['select-date'] || 'Please select a date.');
+            return;
+        }
+        document.getElementById('confirmActionMessage').textContent = `${translations[currentLanguage]['confirm-delete-column'] || 'Are you sure you want to delete the'} "${translations[currentLanguage][column] || column}" ${translations[currentLanguage]['data-for'] || 'data for'} ${date}?`;
+        const modal = document.getElementById('confirmActionModal');
+        modal.style.display = 'flex';
+        applyTheme();
+
+        document.getElementById('confirmActionBtn').onclick = async () => {
+            let changesMade = false;
+            orders = orders.map(o => {
+                if (o.date === date) {
+                    const newOrder = { ...o };
+                    if (column === 'table') { newOrder.table = ''; changesMade = true; }
+                    if (column === 'time') { newOrder.time = ''; changesMade = true; }
+                    if (column === 'items') { newOrder.items = []; newOrder.total = 0; changesMade = true; }
+                    if (column === 'total') { newOrder.total = 0; changesMade = true; }
+                    return newOrder;
+                }
+                return o;
+            });
+            await saveOrders();
+            updateReports(); // Refresh report section
+            modal.style.display = 'none';
+            if (changesMade) {
+                alert(translations[currentLanguage]['column-deleted'] || 'Column data deleted successfully.');
+            } else {
+                alert(translations[currentLanguage]['no-data-to-delete-column'] || 'No data found for the selected date and column to delete.');
+            }
+        };
+    }
+
+    // Event Listeners
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        mainContent.classList.toggle('active');
+    });
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const page = link.getAttribute('data-page');
+            showPage(page);
+            sidebar.classList.remove('active');
+            mainContent.classList.remove('active');
+        });
+    });
+
+    document.getElementById('newOrderBtn').addEventListener('click', () => showPage('current-orders'));
+    document.getElementById('addProductBtn').addEventListener('click', addProduct);
+    document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
+    document.getElementById('dailyReportBtn').addEventListener('click', () => showPage('reports'));
+    document.getElementById('addPurchaseBtn').addEventListener('click', addPurchase);
+    document.getElementById('addNewProductBtn').addEventListener('click', addProduct);
+    document.getElementById('addNewCategoryBtn').addEventListener('click', addCategory);
+    document.getElementById('addNewPurchaseBtn').addEventListener('click', addPurchase);
+
+    document.getElementById('productForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const newProduct = {
+            id: Date.now(),
+            name: document.getElementById('productName').value,
+            category: document.getElementById('productCategory').value,
+            price: parseInt(document.getElementById('productPrice').value)
+        };
+        products.push(newProduct);
+        await saveProducts();
+        updateProductsTable();
+        document.getElementById('addProductModal').style.display = 'none';
+    });
+
+    document.getElementById('categoryForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const newCategory = document.getElementById('newCategoryName').value.trim();
+        if (newCategory && !categories.includes(newCategory)) {
+            categories.push(newCategory);
+            await saveCategories();
+            updateCategoriesTable();
+            document.getElementById('addCategoryModal').style.display = 'none';
+        } else if (categories.includes(newCategory)) {
+            alert(translations[currentLanguage]['category-exists'] || 'Category already exists!');
+        }
+    });
+
+    document.getElementById('purchaseForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const newPurchase = {
+            id: Date.now(),
+            name: document.getElementById('purchaseItemName').value,
+            quantity: parseInt(document.getElementById('purchaseQuantity').value),
+            unitPrice: parseInt(document.getElementById('purchaseUnitPrice').value),
+            date: document.getElementById('purchaseDateModal').value
+        };
+        purchases.push(newPurchase);
+        await savePurchases();
+        updatePurchasesTable();
+        document.getElementById('addPurchaseModal').style.display = 'none';
+    });
+
+    document.getElementById('timeForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (currentOrder) {
+            currentOrder.time = document.getElementById('orderTime').value;
+            document.getElementById('orderTimeDisplay').textContent = currentOrder.time;
+            await saveOrders();
+        }
+    });
+
+    document.getElementById('cancelOrderBtn').addEventListener('click', () => {
+        document.getElementById('confirmActionMessage').textContent = translations[currentLanguage]['confirm-cancel-order'] || 'Are you sure you want to cancel this order?';
+        const modal = document.getElementById('confirmActionModal');
+        modal.style.display = 'flex';
+        applyTheme();
+        document.getElementById('confirmActionBtn').onclick = async () => {
+            if (currentOrder) {
+                orders = orders.filter(o => o.id !== currentOrder.id);
+                await saveOrders();
+            }
+            document.getElementById('orderDetails').style.display = 'none';
+            updateTablesAndParcels();
+            modal.style.display = 'none';
+        };
+    });
+
+    document.getElementById('completeOrderBtn').addEventListener('click', () => {
+        document.getElementById('confirmActionMessage').textContent = translations[currentLanguage]['confirm-complete-order'] || 'Are you sure you want to complete this order?';
+        const modal = document.getElementById('confirmActionModal');
+        modal.style.display = 'flex';
+        applyTheme();
+        document.getElementById('confirmActionBtn').onclick = async () => {
+            if (currentOrder) {
+                currentOrder.status = 'completed';
+                currentOrder.date = new Date().toISOString().split('T')[0]; // Ensure date is set upon completion
+                await saveOrders();
+            }
+            document.getElementById('orderDetails').style.display = 'none';
+            updateTablesAndParcels();
+            updateDashboard();
+            modal.style.display = 'none';
+        };
+    });
+
+    document.getElementById('productSearch').addEventListener('input', updateProductsTable);
+    document.getElementById('purchaseDate').addEventListener('change', updatePurchasesTable);
+    document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+    document.getElementById('exportPdfBtn').addEventListener('click', exportPDF);
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+    document.getElementById('deleteDateBtn').addEventListener('click', deleteReportData);
+    document.getElementById('deleteColumnBtn').addEventListener('click', deleteColumnData);
+
+    document.getElementById('languageSelect').addEventListener('change', async function() {
+        currentLanguage = this.value;
+        await saveSettings();
+        applyLanguage();
+    });
+
+    document.getElementById('toggleThemeBtn').addEventListener('click', async function() {
+        isDarkMode = !isDarkMode;
+        await saveSettings();
+        applyTheme();
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (currentPassword !== masterPassword) {
+            alert(translations[currentLanguage]['incorrect-password'] || 'Current password is incorrect.');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            alert(translations[currentLanguage]['password-mismatch'] || 'New password and confirm password do not match.');
+            return;
+        }
+        masterPassword = newPassword;
+        await saveSettings();
+        alert(translations[currentLanguage]['password-changed'] || 'Password changed successfully.');
+        document.getElementById('passwordForm').reset();
+    });
+
+    document.querySelectorAll('.modal .close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+            if (this.closest('#orderDetails')) {
+                document.getElementById('orderDetails').style.display = 'none';
+            }
+            if (this.closest('#categoryProducts')) {
+                document.getElementById('categoryProducts').style.display = 'none';
+            }
+            // If editing category, remove the dynamically added 'View' button
+            const editModal = document.getElementById('editModal');
+            if (editModal.style.display === 'flex') { // Only remove if edit modal is active
+                const viewProductsBtn = editModal.querySelector('.action-btn.btn-primary[type="button"]');
+                if (viewProductsBtn && viewProductsBtn.parentNode) {
+                    viewProductsBtn.parentNode.removeChild(viewProductsBtn);
+                }
+            }
+        });
+    });
+
+    document.getElementById('closeOrderDetails').addEventListener('click', () => {
+        document.getElementById('orderDetails').style.display = 'none';
+        updateTablesAndParcels(); // Refresh table states when closing order details
+    });
+
+    document.getElementById('closeCategoryProducts').addEventListener('click', () => {
+        document.getElementById('categoryProducts').style.display = 'none';
+    });
+
+
+    document.getElementById('cancelQuantityBtn').addEventListener('click', () => {
+        document.getElementById('editQuantityModal').style.display = 'none';
+    });
+
+    document.getElementById('cancelActionBtn').addEventListener('click', () => {
+        document.getElementById('confirmActionModal').style.display = 'none';
+    });
+
+    document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+        document.getElementById('confirmDeleteModal').style.display = 'none';
+        document.getElementById('editModal').style.display = 'none'; // Also close edit modal if delete was initiated from it
+    });
+
+    // Initialize application
+    try {
+        db = await initDB();
+        await loadData();
+        applyLanguage();
+        applyTheme();
+        showPage('dashboard');
+    } catch (error) {
+        console.error('Application initialization failed:', error);
+        alert(translations[currentLanguage]['app-init-error'] || 'Failed to initialize application.');
+    }
+});
+</script>
+
+
+</div></body></html>
