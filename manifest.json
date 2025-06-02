@@ -1,17 +1,17 @@
 {
-  "name": "AKM Test",
-  "short_name": "AKM Test",
+  "name": "AKM Test P",
+  "short_name": "AKM Test P",
   "description": "Cafe POS System",
-  "start_url": "/akmtest/",
+  "start_url": "/akmtestp/",
   "display": "standalone",
   "icons": [
       {
-          "src": "/akmtest/icons/icon-192x192.png",
+          "src": "/akmtestp/icons/icon-192x192.png",
           "sizes": "192x192",
           "type": "image/png"
       },
       {
-          "src": "/akmtest/icons/icon-512x512.png",
+          "src": "/akmtestp/icons/icon-512x512.png",
           "sizes": "512x512",
           "type": "image/png"
       }
